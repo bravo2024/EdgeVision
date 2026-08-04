@@ -41,9 +41,12 @@ def load_cifar10(data_dir: Optional[str] = None) -> Dict:
         from torchvision import datasets, transforms
         from torch.utils.data import DataLoader, TensorDataset
 
+        # NOTE: only ToTensor here (pixels -> [0,1] floats). Normalization is
+        # applied EXACTLY ONCE, later, inside make_torch_loaders (via the
+        # train/test transforms). Normalizing here AND again in the loaders
+        # would double-shift the input domain (x - 2*mu)/(2*sigma).
         transform_test = transforms.Compose([
             transforms.ToTensor(),
-            transforms.Normalize(IMAGENET_MEAN, IMAGENET_STD),
         ])
 
         if data_dir is None:

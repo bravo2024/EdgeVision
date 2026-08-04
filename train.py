@@ -61,9 +61,12 @@ def main():
     print(f"Model Size: {bench['model_size_mb']:.2f} MB")
     print(f"Latency: {bench['avg_inference_ms']:.1f} ms")
 
-    # Save
+    # Save. Filenames match what app.py's cached-model loader expects
+    # (mobilenet_v2.pth / shufflenet_v2.pth / resnet18.pth).
     Path("models").mkdir(exist_ok=True)
-    weights_path = f"models/{args.model}.pth"
+    save_name = {"mobilenet": "mobilenet_v2", "shufflenet": "shufflenet_v2",
+                 "resnet18": "resnet18"}[args.model]
+    weights_path = f"models/{save_name}.pth"
     torch.save(result["model"].state_dict(), weights_path)
     with open("models/metrics.json", "w") as f:
         json.dump({
